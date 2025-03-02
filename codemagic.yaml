@@ -20,19 +20,11 @@ workflows:
         script: |
           set -e
           flutter clean
+      - name: Prepare iOS dependencies
+        script: |
+          set -e
           flutter pub get
-
-      - name: Generate Podfile if missing
-        script: |
-          set -e
-          cd ios
           flutter build ios --no-codesign
-
-      - name: Install CocoaPods
-        script: |
-          set -e
-          cd ios
-          pod install --repo-update --verbose
 
       - name: Build iOS App
         script: |
@@ -40,4 +32,4 @@ workflows:
           flutter build ios --debug --no-codesign
 
     artifacts:
-      - build/ios/debug-iphoneos/*.app
+      - build/ios/iphoneos/*.app

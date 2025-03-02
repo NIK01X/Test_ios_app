@@ -1,0 +1,42 @@
+workflows:
+  ios-build:
+    name: iOS Debug Build
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+    triggering:
+      events:
+        - push
+        - pull_request
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ios/Pods
+
+    scripts:
+      - name: Clean Flutter project
+        script: |
+          flutter clean
+          flutter pub get
+
+      - name: Remove old iOS dependencies
+        script: |
+          cd ios
+          rm -rf Pods Podfile.lock
+
+      - name: Get Flutter dependencies
+        script: flutter pub get
+
+      - name: Install CocoaPods
+        script: |
+          cd ios
+          pod install --repo-update --verbose
+
+      - name: Build iOS App
+        script: |
+          flutter build ios --debug --no-codesign
+
+    artifacts:
+      - build/ios/iphoneos/*.app # Corrected path for iOS app

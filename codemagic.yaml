@@ -18,25 +18,26 @@ workflows:
     scripts:
       - name: Clean Flutter project
         script: |
+          set -e
           flutter clean
           flutter pub get
 
-      - name: Remove old iOS dependencies
+      - name: Generate Podfile if missing
         script: |
+          set -e
           cd ios
-          rm -rf Pods Podfile.lock
-
-      - name: Get Flutter dependencies
-        script: flutter pub get
+          flutter build ios --no-codesign
 
       - name: Install CocoaPods
         script: |
+          set -e
           cd ios
           pod install --repo-update --verbose
 
       - name: Build iOS App
         script: |
+          set -e
           flutter build ios --debug --no-codesign
 
     artifacts:
-      - build/ios/iphoneos/*.app # Corrected path for iOS app
+      - build/ios/debug-iphoneos/*.app
